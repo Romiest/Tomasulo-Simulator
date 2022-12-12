@@ -19,7 +19,7 @@ public class Tomasulo {
 	static int subLatency = 3;
 	static int mulLatency = 6;
 	static int divLatency = 9;
-	static int loadLatency = 2;
+	static int loadLatency = 4;
 	static int storeLatency = 2;
 
 // stations
@@ -196,13 +196,16 @@ public class Tomasulo {
 
 					if (station == Lstations) {
 						regFile.put(instruction.dest, "L" + (i + 1));
-						instruction.station="L"+(i+1);
+						
 					}
+					String st = (station == Lstations ? "L" : "S") + (i + 1);
+					instruction.station=st;
 
 					instruction.dest = regFile.get(instruction.dest);
 				}
 				station[i] = instruction;
 
+				System.out.println("Instruction number "+instruction.id+" got issued in "+instruction.station);
 				return true;
 
 			}
@@ -239,10 +242,9 @@ public class Tomasulo {
 				if (noDependence(I)) {
 					I.time--;
 					if (I.time > -1)
-						System.out
-								.println("Instruction " + I.id + " has " + I.time + " cycles left to finish execution");
+						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " has " + I.time + " cycles left to finish execution");
 				} else {
-					System.out.println("Instruction " + I.id + " still waiting to get the correct values");
+					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " still waiting to get the correct values");
 				}
 
 				if (I.time == 0) {
@@ -256,7 +258,7 @@ public class Tomasulo {
 					finished.add(I);
 				}
 				if (I.time <= -1&&I.finished==true) {
-					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station");
+					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station "+I.station);
 					Astations[i] = null;
 				}
 
@@ -269,10 +271,9 @@ public class Tomasulo {
 				if (noDependence(I)) {
 					I.time--;
 					if (I.time > -1)
-						System.out
-								.println("Instruction " + I.id + " has " + I.time + " cycles left to finish execution");
+						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " has " + I.time + " cycles left to finish execution");
 				} else {
-					System.out.println("Instruction " + I.id + " still waiting to get the correct values");
+					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " still waiting to get the correct values");
 				}
 
 				if (I.time == 0) {
@@ -287,7 +288,7 @@ public class Tomasulo {
 					finished.add(I);
 				}
 				if (I.time <= -1&&I.finished==true) {
-					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station");
+					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station "+I.station);
 					Mstations[i] = null;
 				}
 
@@ -300,11 +301,9 @@ public class Tomasulo {
 				if (I.mem == true) {
 					I.time--;
 					if (I.time > -1)
-						System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " has " + I.time
-								+ " cycles left to finish execution");
+						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")" + " has " + I.time+ " cycles left to finish execution");
 				} else {
-					System.out.println(
-							"Instruction " + I.id + " (" + I.operation + ")" + " still waiting for the memory");
+					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")" + " still waiting for the memory");
 				}
 
 				if (I.time == 0) {
@@ -314,7 +313,7 @@ public class Tomasulo {
 				}
 				if (I.time <= -1&&I.finished==true) {
 
-					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station");
+					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station "+I.station);
 
 					Lstations[i] = null;
 				}
@@ -328,13 +327,11 @@ public class Tomasulo {
 				if (noDependence(I) && I.mem == true) {
 					I.time--;
 					if (I.time > -1)
-						System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " has " + I.time
-								+ " cycles left to finish execution");
+						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")" + " has " + I.time+ " cycles left to finish execution");
 				}
 
 				else {
-					System.out.println("Instruction " + I.id + " (" + I.operation + ")"
-							+ " still waiting to get the correct values or cant access memory yet");
+					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")"+ " still waiting to get the correct values or cant access memory yet");
 				}
 
 				if (I.time == 0) {
@@ -454,10 +451,10 @@ public class Tomasulo {
 
 				if (issue(inst)) {
 					instructionQueue.poll();
-					System.out.println("instruction number " + inst.id + " got issued");
+					
 				}
 			}
-
+			System.out.println("Instruction Queue: "+instructionQueue);
 			clock++;
 			System.out.println("------------------------------------------");
 		}
