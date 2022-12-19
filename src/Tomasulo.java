@@ -210,8 +210,8 @@ public class Tomasulo {
 
 			}
 		}
-		String s = station == Mstations ? "M" : station == Astations ? "A" : station == Lstations ? "L" : "S";
-		System.out.println(s + " station is full so instruction " + instruction.id + " did not get issued");
+		String s = station == Mstations ? "MUL/DIV" : station == Astations ? "ADD/SUB" : station == Lstations ? "LOAD" : "STORE";
+		System.out.println(s + " stations is full so instruction " + instruction.id + " did not get issued");
 		return false;
 	}
 
