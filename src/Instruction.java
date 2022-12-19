@@ -13,6 +13,8 @@ String station;
 String execValue="";
 boolean mem;
 boolean finished=false;
+boolean justGotValues=false;
+boolean firstExec=true;
 
 public Instruction() {
 	this.id=count;

@@ -15,11 +15,11 @@ public class Tomasulo {
 	static boolean memOccupied = false;
 
 // latencies
-	static int addLatency = 4;
-	static int subLatency = 3;
-	static int mulLatency = 6;
-	static int divLatency = 9;
-	static int loadLatency = 4;
+	static int addLatency = 2;
+	static int subLatency = 2;
+	static int mulLatency = 10;
+	static int divLatency = 40;
+	static int loadLatency = 2;
 	static int storeLatency = 2;
 
 // stations
@@ -139,7 +139,7 @@ public class Tomasulo {
 			I.operand2 = rightSide[2];
 			I.time = getLatency(I.operation);
 
-		} else {// load or store
+		} else { // load or store
 			I.operation = firstSplit[0].charAt(0) + "";
 			I.time = getLatency(I.operation);
 			I.inst = data;
@@ -196,22 +196,22 @@ public class Tomasulo {
 
 					if (station == Lstations) {
 						regFile.put(instruction.dest, "L" + (i + 1));
-						
+
 					}
 					String st = (station == Lstations ? "L" : "S") + (i + 1);
-					instruction.station=st;
+					instruction.station = st;
 
 					instruction.dest = regFile.get(instruction.dest);
 				}
 				station[i] = instruction;
 
-				System.out.println("Instruction number "+instruction.id+" got issued in "+instruction.station);
+				System.out.println("Instruction number " + instruction.id + " got issued in " + instruction.station);
 				return true;
 
 			}
 		}
 		String s = station == Mstations ? "M" : station == Astations ? "A" : station == Lstations ? "L" : "S";
-		System.out.println(s + "station is full so instruction " + instruction.id + " did not get issued");
+		System.out.println(s + " station is full so instruction " + instruction.id + " did not get issued");
 		return false;
 	}
 
@@ -239,12 +239,31 @@ public class Tomasulo {
 			if (Astations[i] != null) {
 				Instruction I = Astations[i];
 
-				if (noDependence(I)) {
-					I.time--;
-					if (I.time > -1)
-						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " has " + I.time + " cycles left to finish execution");
+				if (I.justGotValues) {
+					System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id
+							+ " will start executing next cycle");
+
+					I.justGotValues = false;
+				}
+
+				else if (noDependence(I)) {
+
+					if (I.firstExec) {
+						System.out.println(
+								"(" + "station " + I.station + ") " + "Instruction " + I.id + " started execution");
+						I.time--;
+						I.firstExec = false;
+					}
+
+					else {
+						I.time--;
+						if (I.time > -1)
+							System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id + " has "
+									+ I.time + " cycles left to finish execution");
+					}
 				} else {
-					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " still waiting to get the correct values");
+					System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id
+							+ " still waiting to get the correct values");
 				}
 
 				if (I.time == 0) {
@@ -257,10 +276,6 @@ public class Tomasulo {
 					System.out.println("Instruction " + I.id + " finished execution");
 					finished.add(I);
 				}
-				if (I.time <= -1&&I.finished==true) {
-					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station "+I.station);
-					Astations[i] = null;
-				}
 
 			}
 		}
@@ -268,12 +283,29 @@ public class Tomasulo {
 			if (Mstations[i] != null) {
 				Instruction I = Mstations[i];
 
-				if (noDependence(I)) {
-					I.time--;
-					if (I.time > -1)
-						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " has " + I.time + " cycles left to finish execution");
+				if (I.justGotValues) {
+					System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id
+							+ " will start executing next cycle");
+
+					I.justGotValues = false;
+				}
+
+				else if (noDependence(I)) {
+
+					if (I.firstExec) {
+						System.out.println(
+								"(" + "station " + I.station + ") " + "Instruction " + I.id + " started execution");
+						I.time--;
+						I.firstExec = false;
+					} else {
+						I.time--;
+						if (I.time > -1)
+							System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id + " has "
+									+ I.time + " cycles left to finish execution");
+					}
 				} else {
-					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " still waiting to get the correct values");
+					System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id
+							+ " still waiting to get the correct values");
 				}
 
 				if (I.time == 0) {
@@ -287,10 +319,6 @@ public class Tomasulo {
 					System.out.println("Instruction " + I.id + " finished execution");
 					finished.add(I);
 				}
-				if (I.time <= -1&&I.finished==true) {
-					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station "+I.station);
-					Mstations[i] = null;
-				}
 
 			}
 		}
@@ -299,23 +327,28 @@ public class Tomasulo {
 				Instruction I = Lstations[i];
 
 				if (I.mem == true) {
+					
+					if(I.firstExec) {
+						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " started execution");
+						I.time--;
+						I.firstExec=false;
+					}
+					else {
 					I.time--;
 					if (I.time > -1)
-						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")" + " has " + I.time+ " cycles left to finish execution");
+						System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id + " ("
+								+ I.operation + ")" + " has " + I.time + " cycles left to finish execution");
+					}
 				} else {
-					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")" + " still waiting for the memory");
+					System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id + " (" + I.operation
+							+ ")" + " still waiting for the memory");
 				}
 
 				if (I.time == 0) {
 					load(I);
 					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " finished execution");
 					finished.add(I);
-				}
-				if (I.time <= -1&&I.finished==true) {
-
-					System.out.println("Instruction " + I.id + " (" + I.operation + ")" + " left the station "+I.station);
-
-					Lstations[i] = null;
+					turnInMemory();
 				}
 
 			}
@@ -324,25 +357,43 @@ public class Tomasulo {
 			if (Sstations[i] != null) {
 				Instruction I = Sstations[i];
 
-				if (noDependence(I) && I.mem == true) {
+				if (I.justGotValues) {
+					System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id
+							+ " will start executing next cycle");
+
+					I.justGotValues = false;
+				}
+
+				else if (noDependence(I) && I.mem == true) {
+					
+					if(I.firstExec) {
+						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " started execution");
+						I.time--;
+						I.firstExec=false;
+					}
+					else {
 					I.time--;
 					if (I.time > -1)
-						System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")" + " has " + I.time+ " cycles left to finish execution");
+						System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id + " ("
+								+ I.operation + ")" + " has " + I.time + " cycles left to finish execution");
+					}	
 				}
 
 				else {
-					System.out.println("("+"station "+I.station+") "+"Instruction " + I.id + " (" + I.operation + ")"+ " still waiting to get the correct values or cant access memory yet");
+					System.out.println("(" + "station " + I.station + ") " + "Instruction " + I.id + " (" + I.operation
+							+ ")" + " still waiting to get the correct values or cant access memory yet");
 				}
 
 				if (I.time == 0) {
 					System.out.println("Instruction " + I.id + " finished execution");
 					finished.add(I);
+					turnInMemory();
 				}
 
-				if (I.time <= -1&&I.finished==true) {
+				if (I.time <= -1 && I.finished == true) {
 					System.out.println("Instruction " + I.id + " stored the value in memory");
 					store(I);
-					Sstations[i] = null;
+
 				}
 			}
 		}
@@ -357,13 +408,13 @@ public class Tomasulo {
 				System.out.println("instruction number " + I.id + " (" + I.operation + ")" + " writes its value on CDB "
 						+ I.execValue);
 				String station = I.station;
-				
 
 				// loop on regFile to give correct values
 				String f = "F";
 				for (int i = 0; i < 32; i++) {
 					String reg = (f + i + "");
 					if (regFile.get(reg).equals(station)) {
+
 						System.out.println("register " + reg + " value has been replaced from station " + station
 								+ " to " + I.execValue);
 						regFile.put(reg, I.execValue);
@@ -379,13 +430,22 @@ public class Tomasulo {
 							System.out.println("instruction " + inst.id + "(" + inst.operation + ") "
 									+ " operand1 value has been replaced from station " + station + " to "
 									+ I.execValue);
+							if (noDependence(inst)) {
+								inst.justGotValues = true;
+							}
 						}
+
 						if (inst.operand2.equals(station)) {
 							inst.operand2 = I.execValue;
 							System.out.println("instruction " + inst.id + "(" + inst.operation + ") "
 									+ " operand2 value has been replaced from station " + station + " to "
 									+ I.execValue);
+
+							if (noDependence(inst)) {
+								inst.justGotValues = true;
+							}
 						}
+
 					}
 				}
 
@@ -398,12 +458,19 @@ public class Tomasulo {
 							System.out.println("instruction " + inst.id + "(" + inst.operation + ") "
 									+ " operand value has been replaced from station " + station + " to "
 									+ I.execValue);
+							if (noDependence(inst)) {
+								inst.justGotValues = true;
+							}
 						}
 						if (inst.operand2.equals(station)) {
 							inst.operand2 = I.execValue;
 							System.out.println("instruction " + inst.id + "(" + inst.operation + ") "
 									+ " operand value has been replaced from station " + station + " to "
 									+ I.execValue);
+
+							if (noDependence(inst)) {
+								inst.justGotValues = true;
+							}
 						}
 					}
 				}
@@ -416,24 +483,82 @@ public class Tomasulo {
 									+ " operand value has been replaced from station " + station + " to "
 									+ I.execValue);
 							inst.dest = I.execValue;
+							if (noDependence(inst)) {
+								inst.justGotValues = true;
+							}
 						}
 
 					}
 				}
 
 			}
-			if (I.operation.equals("L") || I.operation.equals("S")) {
-				if (!turnInMemory.isEmpty()) {
-					Instruction inst = turnInMemory.poll();
-					inst.mem = true;
-				} else {
-					memOccupied = false;
-				}
-			}
-			I.finished=true;
+		
+//			if (I.operation.equals("L") || I.operation.equals("S")) {
+//				if (!turnInMemory.isEmpty()) {
+//					Instruction inst = turnInMemory.poll();
+//					inst.mem = true;
+//				} else {
+//					memOccupied = false;
+//				}
+//			}
+			I.finished = true;
 			finishedInstructions++;
 		}
 
+	}
+
+	public static void EmptyStations() {
+		for (int i = 0; i < Astations.length; i++) {	
+			if (Astations[i] != null) {
+				
+				Instruction I = Astations[i];
+				if (I.finished ) {
+					System.out.println(
+							"Instruction " + I.id + " (" + I.operation + ")" + " left the station " + I.station);
+					Astations[i] = null;
+				}
+			}
+		}
+		for (int i = 0; i < Mstations.length; i++) {
+			if (Mstations[i] != null) {
+				Instruction I = Mstations[i];
+				if (I.finished) {
+					System.out.println(
+							"Instruction " + I.id + " (" + I.operation + ")" + " left the station " + I.station);
+					Mstations[i] = null;
+				}
+			}
+		}
+		for (int i = 0; i < Lstations.length; i++) {
+			if (Lstations[i] != null) {
+				Instruction I = Lstations[i];
+				if (I.finished ) {
+					System.out.println(
+							"Instruction " + I.id + " (" + I.operation + ")" + " left the station " + I.station);
+					Lstations[i] = null;
+				}
+			}
+		}
+
+		for (int i = 0; i < Sstations.length; i++) {
+			if (Sstations[i] != null) {
+				Instruction I = Sstations[i];
+				if (I.finished) {
+					System.out.println(
+							"Instruction " + I.id + " (" + I.operation + ")" + " left the station " + I.station);
+					Sstations[i] = null;
+				}
+			}
+		}
+	}
+
+	public static void turnInMemory() {
+		if (!turnInMemory.isEmpty()) {
+			Instruction inst = turnInMemory.poll();
+			inst.mem = true;
+		} else {
+			memOccupied = false;
+		}
 	}
 
 	public static void Tom() {
@@ -451,21 +576,37 @@ public class Tomasulo {
 
 				if (issue(inst)) {
 					instructionQueue.poll();
-					
+
 				}
+			
 			}
-			System.out.println("Instruction Queue: "+instructionQueue);
+			EmptyStations();
+
+			System.out.println("Instruction Queue: " + instructionQueue);
 			clock++;
 			System.out.println("------------------------------------------");
+		}
+		System.out.println("REG FILE:-");
+		for (int i = 0; i < 32; i++) {
+			System.out.println("F" + i + ": " + regFile.get("F" + i));
 		}
 	}
 
 	public static void main(String[] args) {
 		readFile("Assembly.txt");
-		regFile.put("F4", "2");
+		regFile.put("F0", "36");
+		regFile.put("F1", "2");
+		regFile.put("F2", "3");
+		// regFile.put("F3", "2");
+		regFile.put("F4", "4");
 		regFile.put("F5", "5");
-		regFile.put("F8", "1");
-		dataMemory[100]=9;
+		regFile.put("F6", "1");
+		regFile.put("F8", "8");
+		regFile.put("F9", "12");
+		regFile.put("F7", "7");
+		regFile.put("F10", "2");
+		regFile.put("F11", "5");
+		dataMemory[100] = 9;
 		Tom();
 
 		// System.out.println(instructionQueue.peek().time);
