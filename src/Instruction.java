@@ -11,11 +11,21 @@ String operand2="";
 String address="";
 String station;
 String execValue="";
+
+// for GUI
+String issuedIn="-";
+String execIn="-";
+String wbIn="-";
+//----------
+
 boolean mem;
 boolean finished=false;
 boolean justGotValues=false;
 boolean firstExec=true;
-
+// for GUI
+boolean issued=false;
+boolean finishedExec=false;
+//----------
 public Instruction() {
 	this.id=count;
 	count++;
