@@ -29,13 +29,19 @@ This will launch the GUI, which allows you to input instructions and see the exe
  
 1-Enter the instructions in the input field, one instruction per line. For example :-
 
-` L.D F0,100
-S.D F1,50
-ADD.D F3,F1,F2
-MUL.D F1,F2,F4
-SUB.D F4,F8,F9
-DIV.D F10,F11,F12
-S.D F1,106 `
+` L.D F0,100 `
+
+`S.D F1,50 `
+
+`ADD.D F3,F1,F2`
+
+`MUL.D F1,F2,F4`
+
+`SUB.D F4,F8,F9`
+
+`DIV.D F10,F11,F12`
+
+`S.D F1,106 `
 
 2- click the ` Run Tomasulo ` button to start execution
 
