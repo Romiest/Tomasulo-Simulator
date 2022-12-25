@@ -512,7 +512,9 @@ public class Tomasulo {
 				}
 
 			}
+			if(!I.operation.equals("S"))
 			I.wbIn = clock + "";
+			
 			I.finished = true;
 			finishedInstructions++;
 		}
