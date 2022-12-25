@@ -8,7 +8,7 @@ The project also includes a graphical user interface (GUI) built using the Swing
 
 To run this project, you will need:
 
-*Java SE 8 or later
+* Java SE 8 or later
 
 ## Installation
 
@@ -49,8 +49,7 @@ This will launch the GUI, which allows you to input instructions and see the exe
 
 
 
- hope this documentation helps users understand and use your Java project implementing Tomasulo's algorithm with a Swing GUI. 
- Let me know if you have any questions or need any further assistance.  :)
+ happy coding :)
 
 
 
