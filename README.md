@@ -1,6 +1,6 @@
 # Java Tomasulo's Algorithm with Swing GUI
 
-This project is a Java implementation of Tomasulo's algorithm, a dynamic instruction scheduling algorithm used in computer processors to improve performance. 
+This project is a Java implementation and visualization of Tomasulo's algorithm, a dynamic instruction scheduling algorithm used in computer processors to improve performance. 
 The project also includes a graphical user interface (GUI) built using the Swing library for a more interactive and user-friendly experience.
 
 
