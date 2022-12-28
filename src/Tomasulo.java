@@ -42,9 +42,7 @@ public class Tomasulo {
 		loadLatency = GUI.loadLat;
 		storeLatency = GUI.storeLat;
 
-		for (int i = 0; i < 32; i++) {
-			regFile.put("F" + i, "0.0");
-		}
+		
 
 		try {
 			File f = new File(filename);

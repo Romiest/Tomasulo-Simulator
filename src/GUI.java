@@ -202,6 +202,26 @@ public class GUI extends JFrame {
 	
 	
 	public GUI(ArrayList<Cycle> cycles) {
+		String [] [] regFile=new String[32][2];
+		String [] [] dataMem=new String[1024][2];
+		
+
+		addValues();
+		
+		for(int i=0;i<32;i++) {
+			String [] curr=new String[2];
+			curr[0]="F"+i;
+			curr[1]=Tomasulo.regFile.get("F"+i);
+				regFile[i]=curr;
+			
+		}
+		for(int i=0;i<Tomasulo.dataMemory.length;i++) {
+			String [] curr=new String[2];
+			curr[0]="M["+i+"]";
+			curr[1]=Tomasulo.dataMemory[i]+"";
+				dataMem[i]=curr;
+			
+		}
 		
 		 
 
@@ -276,40 +296,8 @@ public class GUI extends JFrame {
 		
 		table_1 = new JTable();
 		table_1.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-			},
+			regFile	
+			,
 			new String[] {
 				"register", "value"
 			}
@@ -450,7 +438,6 @@ public class GUI extends JFrame {
 				}
 				setLatencies();
 				Tomasulo.readFile("Assembly.txt");
-				addValues();
 				Tomasulo.Tom();
 				lblNewLabel_2.setText("clk cycle :  "+(index+1));
 				updateTables(cycles);
@@ -535,11 +522,10 @@ public class GUI extends JFrame {
 		JScrollPane scrollPane_6 = new JScrollPane();
 		scrollPane_6.setBounds(914, 382, 130, 277);
 		contentPane.add(scrollPane_6);
-	    String[][] data = new String[1024][2];
-		
+	  
 		memTable = new JTable();
 		memTable.setModel(new DefaultTableModel(
-			data,
+			dataMem,
 			new String[] {
 				"address", "value"
 			}
@@ -558,6 +544,11 @@ public class GUI extends JFrame {
 	public void addValues() {
 		// write Tomasulo.regFile.put(name of register,value)
 		// write Tomasulo.datMemory[index]= value 
+		for (int i = 0; i < 32; i++) {
+			Tomasulo.regFile.put("F" + i, "0.0");
+		}
+		
+		
 		Tomasulo.regFile.put("F0", "36");
 		Tomasulo.regFile.put("F1", "5");
 		Tomasulo.regFile.put("F2", "3");
