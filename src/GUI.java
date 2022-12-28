@@ -585,6 +585,5 @@ public class GUI extends JFrame {
 		 loadLat = Integer.parseInt(loadLatencyTextField.getText());
 		 storeLat =Integer.parseInt(storeLatencyTextField.getText());
 		 
-		 System.out.println("here"+(addLat-2));
 	}
 }
