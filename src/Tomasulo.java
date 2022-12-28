@@ -616,6 +616,13 @@ public class Tomasulo {
 			curr += "F" + (i) + " " + regFile.get("F" + i);
 			c1.regFileState.add(curr);
 		}
+		
+		// populate the data Memory
+		for (int i = 0; i < 1024; i++) {
+			String curr = "";
+			curr += "M[" + (i) + "] " + dataMemory[i];
+			c1.dataMemState.add(curr);
+		}
 
 		// populate cycle stations
 		for (int i = 0; i < Astations.length; i++) {

@@ -12,6 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class GUI extends JFrame {
 	static int divLat;
 	static int loadLat;
 	static int storeLat;
+	private JTable memTable;
 
 
 
@@ -79,6 +81,7 @@ public class GUI extends JFrame {
 		String [] [] Lstations=new String[cycles.get(index).LstationsState.size()][3];
 		String [] [] Sstations=new String[cycles.get(index).SstationsState.size()][4];
 		String [] [] regFile=new String[32][2];
+		String [] [] dataMem=new String[1024][2];
 		
 		for(int i=0;i<instructionTable.length;i++) {
 			String [] curr=cycles.get(index).InstructionTableState.get(i).split("&");
@@ -91,6 +94,8 @@ public class GUI extends JFrame {
 				instructionTable[i]=res;
 			
 		}
+		
+		
 		for(int i=0;i<Astations.length;i++) {
 			String [] curr=cycles.get(index).AstationsState.get(i).split(" ");
 				Astations[i]=curr;
@@ -114,6 +119,11 @@ public class GUI extends JFrame {
 		for(int i=0;i<regFile.length;i++) {
 			String [] curr=cycles.get(index).regFileState.get(i).split(" ");
 				regFile[i]=curr;
+			
+		}
+		for(int i=0;i<dataMem.length;i++) {
+			String [] curr=cycles.get(index).dataMemState.get(i).split(" ");
+				dataMem[i]=curr;
 			
 		}
 		instructionsTable.setModel(new DefaultTableModel(
@@ -155,6 +165,13 @@ public class GUI extends JFrame {
 				Astations,
 				new String[] {
 					"station", "time", "operation", "operand1", "operand2"
+				}
+			));
+		
+		memTable.setModel(new DefaultTableModel(
+				dataMem,
+				new String[] {
+					"address", "value"
 				}
 			));
 		
@@ -245,7 +262,7 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_1 = new JLabel("Register File");
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
-		lblNewLabel_1.setBounds(935, 18, 92, 13);
+		lblNewLabel_1.setBounds(935, 14, 92, 20);
 		contentPane.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_2 = new JLabel("clk cycle :  "+index);
@@ -303,11 +320,11 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_3 = new JLabel("load bufffer");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
-		lblNewLabel_3.setBounds(412, 414, 106, 20);
+		lblNewLabel_3.setBounds(277, 414, 106, 20);
 		contentPane.add(lblNewLabel_3);
 		
 		JScrollPane scrollPane_3 = new JScrollPane();
-		scrollPane_3.setBounds(352, 444, 210, 74);
+		scrollPane_3.setBounds(226, 444, 210, 74);
 		contentPane.add(scrollPane_3);
 		
 		loadBufferTable = new JTable();
@@ -324,7 +341,7 @@ public class GUI extends JFrame {
 		scrollPane_3.setViewportView(loadBufferTable);
 		
 		JScrollPane scrollPane_3_1 = new JScrollPane();
-		scrollPane_3_1.setBounds(352, 601, 210, 74);
+		scrollPane_3_1.setBounds(226, 601, 210, 74);
 		contentPane.add(scrollPane_3_1);
 		
 		storeBufferTable = new JTable();
@@ -342,11 +359,11 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_3_1 = new JLabel("store bufffer");
 		lblNewLabel_3_1.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
-		lblNewLabel_3_1.setBounds(412, 571, 106, 20);
+		lblNewLabel_3_1.setBounds(277, 571, 106, 20);
 		contentPane.add(lblNewLabel_3_1);
 		
 		JScrollPane scrollPane_4 = new JScrollPane();
-		scrollPane_4.setBounds(653, 444, 391, 74);
+		scrollPane_4.setBounds(490, 444, 391, 74);
 		contentPane.add(scrollPane_4);
 		
 		AstationTable = new JTable();
@@ -364,16 +381,16 @@ public class GUI extends JFrame {
 		
 		JLabel lblNewLabel_3_2 = new JLabel("ADD/SUB stations");
 		lblNewLabel_3_2.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
-		lblNewLabel_3_2.setBounds(761, 414, 162, 20);
+		lblNewLabel_3_2.setBounds(591, 414, 162, 20);
 		contentPane.add(lblNewLabel_3_2);
 		
 		JLabel lblNewLabel_3_2_1 = new JLabel("MUL/DIV stations");
 		lblNewLabel_3_2_1.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 16));
-		lblNewLabel_3_2_1.setBounds(761, 571, 162, 20);
+		lblNewLabel_3_2_1.setBounds(591, 571, 162, 20);
 		contentPane.add(lblNewLabel_3_2_1);
 		
 		JScrollPane scrollPane_5 = new JScrollPane();
-		scrollPane_5.setBounds(653, 601, 391, 58);
+		scrollPane_5.setBounds(490, 601, 391, 58);
 		contentPane.add(scrollPane_5);
 		
 		MstationTable = new JTable();
@@ -515,6 +532,26 @@ public class GUI extends JFrame {
 		storeLatencyTextField.setBounds(112, 605, 38, 19);
 		contentPane.add(storeLatencyTextField);
 		
+		JScrollPane scrollPane_6 = new JScrollPane();
+		scrollPane_6.setBounds(914, 382, 130, 277);
+		contentPane.add(scrollPane_6);
+	    String[][] data = new String[1024][2];
+		
+		memTable = new JTable();
+		memTable.setModel(new DefaultTableModel(
+			data,
+			new String[] {
+				"address", "value"
+			}
+		));
+		 memTable.setPreferredScrollableViewportSize(new Dimension(500, 500));
+		scrollPane_6.setViewportView(memTable);
+		
+		JLabel lblNewLabel_1_1 = new JLabel("Data Memory\r\n");
+		lblNewLabel_1_1.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 14));
+		lblNewLabel_1_1.setBounds(924, 347, 109, 21);
+		contentPane.add(lblNewLabel_1_1);
+		
 	
 	}
 	
@@ -522,7 +559,7 @@ public class GUI extends JFrame {
 		// write Tomasulo.regFile.put(name of register,value)
 		// write Tomasulo.datMemory[index]= value 
 		Tomasulo.regFile.put("F0", "36");
-		Tomasulo.regFile.put("F1", "2");
+		Tomasulo.regFile.put("F1", "5");
 		Tomasulo.regFile.put("F2", "3");
 		Tomasulo.regFile.put("F3", "2");
 		Tomasulo.regFile.put("F4", "4");
@@ -550,7 +587,4 @@ public class GUI extends JFrame {
 		 
 		 System.out.println("here"+(addLat-2));
 	}
-	
-	
-
 }
