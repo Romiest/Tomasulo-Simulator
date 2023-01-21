@@ -16,7 +16,7 @@ To install and set up this project:
 
 Clone the repository to your local machine:
 
-`git clone https://github.com/Romiest/Tomasulo-Algorithm.git`
+`git clone https://github.com/Romiest/Tomasulo-Simulator.git`
 
 
 ## Usage
